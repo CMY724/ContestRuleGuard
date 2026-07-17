@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from math import isfinite
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -23,7 +24,10 @@ class ModelCallLimit:
     def reserved_cost_yuan(self) -> float:
         if self.max_prompt_tokens <= 0 or self.max_output_tokens <= 0:
             raise ValueError("token limits must be positive")
-        return round(
+        prices = (self.prompt_yuan_per_million, self.completion_yuan_per_million)
+        if any(not isfinite(price) or price < 0 for price in prices):
+            raise ValueError("token prices must be finite and non-negative")
+        reserved = round(
             (
                 self.max_prompt_tokens * self.prompt_yuan_per_million
                 + self.max_output_tokens * self.completion_yuan_per_million
@@ -31,6 +35,9 @@ class ModelCallLimit:
             / 1_000_000,
             6,
         )
+        if not isfinite(reserved):
+            raise ValueError("reserved cost must be finite")
+        return reserved
 
 
 class ModelBudgetLedger:
@@ -95,7 +102,18 @@ class ModelBudgetLedger:
         event = self._session.get(ModelUsageEvent, event_id)
         if event is None or event.status != "reserved":
             raise LookupError("model budget reservation not found or already finalized")
-        actual = event.reserved_cost_yuan if not succeeded else float(actual_cost_yuan or 0.0)
+        if prompt_tokens < 0 or completion_tokens < 0:
+            raise ValueError("token usage must be non-negative")
+        if succeeded:
+            if (
+                actual_cost_yuan is None
+                or not isfinite(actual_cost_yuan)
+                or actual_cost_yuan < 0
+            ):
+                raise ValueError("successful calls require a finite non-negative actual cost")
+            actual = float(actual_cost_yuan)
+        else:
+            actual = event.reserved_cost_yuan
         event.prompt_tokens = prompt_tokens
         event.completion_tokens = completion_tokens
         event.charged_cost_yuan = actual
