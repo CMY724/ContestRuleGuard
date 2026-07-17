@@ -55,3 +55,10 @@ def test_delete_project_and_return_404(client: TestClient) -> None:
 
 def test_invalid_project_uuid_is_rejected_at_api_boundary(client: TestClient) -> None:
     assert client.get("/api/projects/not-a-uuid").status_code == 422
+
+
+def test_project_timestamps_are_serialized_as_explicit_utc(client: TestClient) -> None:
+    body = client.post("/api/projects", json=PAYLOAD).json()
+
+    assert body["created_at"].endswith("Z")
+    assert body["updated_at"].endswith("Z")
