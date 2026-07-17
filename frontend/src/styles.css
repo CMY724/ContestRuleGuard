@@ -1,0 +1,73 @@
+:root {
+  font-family: Inter, "Noto Sans SC", system-ui, sans-serif;
+  color: #172033;
+  background: #f3f6fb;
+}
+
+body {
+  margin: 0;
+}
+
+.app-shell {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.eyebrow {
+  color: #315efb;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.project-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) 1fr;
+  gap: 2rem;
+}
+
+.project-form,
+.project-card {
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #dce3ef;
+  border-radius: 1rem;
+}
+
+.project-form {
+  display: grid;
+  gap: 1rem;
+  align-self: start;
+}
+
+.project-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.project-form input,
+.project-form select,
+.project-form button {
+  padding: 0.7rem;
+  font: inherit;
+}
+
+.project-form button {
+  color: #fff;
+  background: #315efb;
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+.project-list {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+@media (max-width: 48rem) {
+  .project-layout {
+    grid-template-columns: 1fr;
+  }
+}

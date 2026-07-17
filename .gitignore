@@ -8,9 +8,16 @@ secrets/
 
 # Private or identifying source material
 private/
+evaluation-private/
+evaluation/predictions/private/
 raw-surveys/
 user-uploads/
 runtime-data/
+data/
+backend/data/
+*.db
+*.sqlite
+*.sqlite3
 
 # Python
 __pycache__/
@@ -27,6 +34,9 @@ dist/
 build/
 .next/
 coverage/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 
 # IDE and operating system
 .idea/
@@ -37,5 +47,6 @@ Thumbs.db
 # Generated scratch artifacts
 tmp/
 work/
+scratch/
+.worktrees/
 *.log
-
