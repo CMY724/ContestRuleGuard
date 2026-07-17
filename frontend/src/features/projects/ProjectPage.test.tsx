@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { StrictMode } from "react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, vi } from "vitest";
 import { ProjectPage } from "./ProjectPage";
@@ -61,6 +62,52 @@ test("初始列表加载失败时只显示错误而不显示空列表", async ()
     "project list unavailable",
   );
   expect(screen.queryByText("还没有项目")).not.toBeInTheDocument();
+});
+
+test("StrictMode 中过期列表响应不会覆盖新建项目", async () => {
+  let resolveFirstList!: (response: Response) => void;
+  let resolveSecondList!: (response: Response) => void;
+  const firstList = new Promise<Response>((resolve) => {
+    resolveFirstList = resolve;
+  });
+  const secondList = new Promise<Response>((resolve) => {
+    resolveSecondList = resolve;
+  });
+  const fetchMock = vi
+    .fn<typeof fetch>()
+    .mockReturnValueOnce(firstList)
+    .mockReturnValueOnce(secondList)
+    .mockResolvedValueOnce(jsonResponse(project, 201));
+  vi.stubGlobal("fetch", fetchMock);
+  const user = userEvent.setup();
+  render(
+    <StrictMode>
+      <ProjectPage />
+    </StrictMode>,
+  );
+
+  resolveSecondList(jsonResponse([]));
+  await screen.findByText("还没有项目");
+  await user.type(screen.getByLabelText("项目名称"), "赛规通");
+  await user.type(
+    screen.getByLabelText("比赛名称"),
+    "全球校园人工智能算法精英大赛",
+  );
+  await user.clear(screen.getByLabelText("比赛年份"));
+  await user.type(screen.getByLabelText("比赛年份"), "2026");
+  await user.type(screen.getByLabelText("参赛赛道"), "算法创新赛");
+  await user.click(screen.getByRole("button", { name: "创建项目" }));
+  expect(
+    await screen.findByRole("heading", { name: "赛规通" }),
+  ).toBeInTheDocument();
+
+  await act(async () => {
+    resolveFirstList(jsonResponse([]));
+  });
+
+  expect(
+    screen.getByRole("heading", { name: "赛规通" }),
+  ).toBeInTheDocument();
 });
 
 test("提交 snake_case 载荷并把新项目加入列表", async () => {

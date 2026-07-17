@@ -17,10 +17,26 @@ export function ProjectPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
     listProjects()
-      .then(setProjects)
-      .catch((reason: Error) => setError(reason.message))
-      .finally(() => setLoading(false));
+      .then((loadedProjects) => {
+        if (active) {
+          setProjects(loadedProjects);
+        }
+      })
+      .catch((reason: Error) => {
+        if (active) {
+          setError(reason.message);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
