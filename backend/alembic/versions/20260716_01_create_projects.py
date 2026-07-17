@@ -38,8 +38,26 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["project_id"], ["projects.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
+    op.create_index(
+        "ix_model_usage_events_project_id",
+        "model_usage_events",
+        ["project_id"],
+    )
+    op.create_index(
+        "ix_model_usage_events_purpose",
+        "model_usage_events",
+        ["purpose"],
+    )
+    op.create_index(
+        "ix_model_usage_events_status",
+        "model_usage_events",
+        ["status"],
+    )
 
 
 def downgrade() -> None:
+    op.drop_index("ix_model_usage_events_status", table_name="model_usage_events")
+    op.drop_index("ix_model_usage_events_purpose", table_name="model_usage_events")
+    op.drop_index("ix_model_usage_events_project_id", table_name="model_usage_events")
     op.drop_table("model_usage_events")
     op.drop_table("projects")
