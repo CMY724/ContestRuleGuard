@@ -87,7 +87,7 @@ export function ProjectPage() {
             <option value="national">国赛</option>
           </select>
         </label>
-        <button disabled={submitting}>
+        <button disabled={loading || submitting}>
           {submitting ? "创建中…" : "创建项目"}
         </button>
       </form>
@@ -95,7 +95,7 @@ export function ProjectPage() {
       <div className="project-list">
         <h2>竞赛项目</h2>
         {loading && <p>正在加载…</p>}
-        {!loading && projects.length === 0 && <p>还没有项目</p>}
+        {!loading && !error && projects.length === 0 && <p>还没有项目</p>}
         {error && <p role="alert">{error}</p>}
         {projects.map((project) => (
           <article className="project-card" key={project.id}>

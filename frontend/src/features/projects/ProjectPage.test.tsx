@@ -34,6 +34,35 @@ test("加载并展示已有项目", async () => {
   expect(screen.getByText("2026 · 算法创新赛 · 校赛")).toBeInTheDocument();
 });
 
+test("初始列表加载完成前禁用项目创建", async () => {
+  let resolveList!: (response: Response) => void;
+  const pendingList = new Promise<Response>((resolve) => {
+    resolveList = resolve;
+  });
+  vi.stubGlobal("fetch", vi.fn().mockReturnValue(pendingList));
+  render(<ProjectPage />);
+
+  const createButton = screen.getByRole("button", { name: "创建项目" });
+  expect(createButton).toBeDisabled();
+
+  resolveList(jsonResponse([]));
+  expect(await screen.findByText("还没有项目")).toBeInTheDocument();
+  expect(createButton).toBeEnabled();
+});
+
+test("初始列表加载失败时只显示错误而不显示空列表", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockRejectedValue(new Error("project list unavailable")),
+  );
+  render(<ProjectPage />);
+
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "project list unavailable",
+  );
+  expect(screen.queryByText("还没有项目")).not.toBeInTheDocument();
+});
+
 test("提交 snake_case 载荷并把新项目加入列表", async () => {
   const fetchMock = vi
     .fn<typeof fetch>()
