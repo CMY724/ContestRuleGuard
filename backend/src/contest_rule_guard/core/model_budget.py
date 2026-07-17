@@ -48,6 +48,11 @@ class ModelBudgetLedger:
         default_budget_yuan: float,
         hard_budget_yuan: float,
     ) -> None:
+        limits = (default_budget_yuan, hard_budget_yuan)
+        if any(not isfinite(limit) or limit < 0 for limit in limits):
+            raise ValueError("model budget limits must be finite and non-negative")
+        if default_budget_yuan > hard_budget_yuan:
+            raise ValueError("default model budget cannot exceed hard budget")
         self._session = session
         self._default = default_budget_yuan
         self._hard = hard_budget_yuan
@@ -61,11 +66,16 @@ class ModelBudgetLedger:
         requested_project_budget_yuan: float,
         override_confirmed: bool,
     ) -> ModelUsageEvent:
+        if (
+            not isfinite(requested_project_budget_yuan)
+            or requested_project_budget_yuan < 0
+        ):
+            raise ValueError("requested project budget must be finite and non-negative")
         if requested_project_budget_yuan > self._hard:
             raise BudgetExceeded("requested project budget exceeds hard limit")
         if requested_project_budget_yuan > self._default and not override_confirmed:
             raise BudgetExceeded("budget override requires explicit confirmation")
-        approved = max(0.0, requested_project_budget_yuan)
+        approved = requested_project_budget_yuan
         charged = float(
             self._session.scalar(
                 select(func.coalesce(func.sum(ModelUsageEvent.charged_cost_yuan), 0.0)).where(

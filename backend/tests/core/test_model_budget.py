@@ -25,6 +25,52 @@ def test_call_limit_rejects_negative_or_non_finite_prices() -> None:
             _ = limit.reserved_cost_yuan
 
 
+@pytest.mark.parametrize(
+    ("default_budget", "hard_budget"),
+    [
+        (-1.0, 20.0),
+        (float("nan"), 20.0),
+        (1.0, -1.0),
+        (1.0, float("inf")),
+        (2.0, 1.0),
+    ],
+)
+def test_ledger_rejects_invalid_budget_limits(
+    default_budget: float,
+    hard_budget: float,
+) -> None:
+    with Session() as session, pytest.raises(ValueError, match="budget"):
+        ModelBudgetLedger(
+            session,
+            default_budget_yuan=default_budget,
+            hard_budget_yuan=hard_budget,
+        )
+
+
+@pytest.mark.parametrize("requested_budget", [-1.0, float("nan"), float("inf")])
+def test_reservation_rejects_invalid_requested_budget(requested_budget: float) -> None:
+    with Session() as session:
+        ledger = ModelBudgetLedger(
+            session,
+            default_budget_yuan=1.0,
+            hard_budget_yuan=20.0,
+        )
+        limit = ModelCallLimit(
+            max_prompt_tokens=100,
+            max_output_tokens=100,
+            prompt_yuan_per_million=1.0,
+            completion_yuan_per_million=1.0,
+        )
+        with pytest.raises(ValueError, match="requested project budget"):
+            ledger.reserve(
+                uuid4(),
+                "rule_extraction",
+                limit,
+                requested_project_budget_yuan=requested_budget,
+                override_confirmed=False,
+            )
+
+
 def test_project_budget_is_shared_and_override_requires_confirmation() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
