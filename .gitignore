@@ -34,6 +34,9 @@ dist/
 build/
 .next/
 coverage/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 
 # IDE and operating system
 .idea/
