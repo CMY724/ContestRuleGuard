@@ -3,3 +3,4 @@ allowBuilds:
 confirmModulesPurge: false
 onlyBuiltDependencies:
   - esbuild
+verifyDepsBeforeRun: false
