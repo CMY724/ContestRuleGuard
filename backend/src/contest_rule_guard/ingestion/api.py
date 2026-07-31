@@ -1,10 +1,22 @@
 ﻿from functools import lru_cache
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
 from sqlalchemy.orm import Session
 
+from contest_rule_guard.core.model_provider import FakeModelProvider, ModelProvider
 from contest_rule_guard.db.session import get_session
+from contest_rule_guard.evidence.repository import EvidenceRepository
 from contest_rule_guard.ingestion.models import DocumentStage, NormalizedDocument, SourceTier
 from contest_rule_guard.ingestion.ocr import RapidOcrEngine
 from contest_rule_guard.ingestion.parsers.docx import DocxParser
@@ -15,6 +27,7 @@ from contest_rule_guard.ingestion.parsers.pptx import PptxParser
 from contest_rule_guard.ingestion.registry import ParserRegistry, UnsupportedDocumentError
 from contest_rule_guard.ingestion.repository import DocumentRepository
 from contest_rule_guard.ingestion.service import IngestionService
+from contest_rule_guard.rules.repository import RuleRepository
 
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MiB
 
@@ -75,3 +88,44 @@ def get_document(
     if document is None:
         raise HTTPException(status_code=404, detail="document not found")
     return document
+
+
+@router.post("/rules:extract")
+async def extract_rules(
+    project_id: UUID,
+    document_id: UUID,
+    body: dict,
+    request: Request,
+    session: Session = Depends(get_session),  # noqa: B008
+) -> dict:
+    doc_repo = DocumentRepository(session)
+    doc = doc_repo.get(project_id, document_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="document not found")
+    evidence_ids = body.get("evidence_ids", [])
+    evidence_repo = EvidenceRepository(session)
+    texts: list[str] = []
+    for ev_id in evidence_ids:
+        spans = evidence_repo.list_by_document(document_id)
+        for span in spans:
+            if str(span.id) == str(ev_id):
+                texts.append(span.quote)
+    if not texts:
+        raise HTTPException(status_code=422, detail="no matching evidence found")
+    provider: ModelProvider = getattr(request.app.state, "model_provider", FakeModelProvider())
+    result = await provider.extract_rules(
+        evidence_texts=texts,
+        context=body.get("context", {}),
+        model_policy=body.get("model_policy", {}),
+    )
+    rule_repo = RuleRepository(session)
+    from contest_rule_guard.rules.models import ContestRuleAdapter as Adapter
+    rules: list[dict] = []
+    for rule_data in result.get("rules", []):
+        try:
+            rule = Adapter.validate_python(rule_data)
+            rule_repo.add(project_id, rule)
+            rules.append(rule.model_dump(mode="json"))
+        except Exception:
+            continue
+    return {"rules": rules}

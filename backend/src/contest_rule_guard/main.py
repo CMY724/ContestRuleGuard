@@ -6,10 +6,12 @@ from contest_rule_guard.core.config import Settings, get_settings
 from contest_rule_guard.core.model_budget import BudgetExceeded
 from contest_rule_guard.db.session import build_engine, build_session_factory
 from contest_rule_guard.evidence.api import router as evidence_router
+from contest_rule_guard.graph.api import router as graph_router
 from contest_rule_guard.ingestion.api import router as ingestion_router
 from contest_rule_guard.ingestion.registry import UnsupportedDocumentError
 from contest_rule_guard.projects.dependencies import build_project_cleanup_registry
 from contest_rule_guard.projects.router import router as projects_router
+from contest_rule_guard.rules.api import router as rules_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -39,6 +41,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(projects_router)
     app.include_router(ingestion_router)
     app.include_router(evidence_router)
+    app.include_router(rules_router)
+    app.include_router(graph_router)
 
     @app.exception_handler(BudgetExceeded)
     async def budget_exceeded_handler(request: Request, exc: BudgetExceeded) -> JSONResponse:
