@@ -63,3 +63,23 @@ class NormalizedDocumentRow(Base):
     stage: Mapped[str] = mapped_column(String(20), nullable=False)
     units_json: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+class EvidenceSpanRow(Base):
+    __tablename__ = "evidence_spans"
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("normalized_documents.id", ondelete="CASCADE"),
+        index=True,
+    )
+    block_id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
+    field_path: Mapped[str] = mapped_column(String(256), nullable=False)
+    quote: Mapped[str] = mapped_column(String, nullable=False)
+    start_char: Mapped[int] = mapped_column(Integer, nullable=False)
+    end_char: Mapped[int] = mapped_column(Integer, nullable=False)
+    source_tier: Mapped[str] = mapped_column(String(20), nullable=False)
+    stage: Mapped[str] = mapped_column(String(20), nullable=False)
+    document_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
