@@ -3,7 +3,6 @@ from io import BytesIO
 from uuid import uuid4
 
 from docx import Document
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from contest_rule_guard.ingestion.models import BlockKind, ParseContext, UnitKind
 from contest_rule_guard.ingestion.parsers.docx import DocxParser

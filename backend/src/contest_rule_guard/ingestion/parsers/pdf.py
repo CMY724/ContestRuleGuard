@@ -1,7 +1,7 @@
-﻿# backend/src/contest_rule_guard/ingestion/parsers/pdf.py
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import fitz  # type: ignore[import-untyped]
+from PIL import Image
 
 from contest_rule_guard.ingestion.models import (
     BlockKind,
@@ -12,7 +12,9 @@ from contest_rule_guard.ingestion.models import (
     TextBlock,
     UnitKind,
 )
-from contest_rule_guard.ingestion.ports import DocumentParser
+from contest_rule_guard.ingestion.ports import DocumentParser, OcrEngine
+
+from .image import ocr_blocks
 
 
 def _bbox(x0: float, y0: float, x1: float, y1: float, width: float, height: float) -> BoundingBox:
@@ -22,6 +24,9 @@ def _bbox(x0: float, y0: float, x1: float, y1: float, width: float, height: floa
 class PdfParser(DocumentParser):
     media_types = frozenset({"application/pdf"})
     extensions = frozenset({".pdf"})
+
+    def __init__(self, ocr: OcrEngine | None = None) -> None:
+        self._ocr = ocr
 
     def parse(self, content: bytes, context: ParseContext) -> NormalizedDocument:
         units: list[DocumentUnit] = []
@@ -44,6 +49,15 @@ class PdfParser(DocumentParser):
                             kind=BlockKind.PARAGRAPH,
                             bbox=_bbox(x0, y0, x1, y1, page.rect.width, page.rect.height),
                         )
+                    )
+                if not blocks and self._ocr is not None:
+                    pix = page.get_pixmap(dpi=200)
+                    image = Image.frombytes(
+                        "RGB", (pix.width, pix.height), pix.samples
+                    )
+                    blocks = ocr_blocks(
+                        image, self._ocr, context.document_id, page_number,
+                        f"page[{page_number}]",
                     )
                 units.append(
                     DocumentUnit(
