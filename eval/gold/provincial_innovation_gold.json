@@ -1,0 +1,90 @@
+{
+  "case": "provincial_innovation",
+  "rules": [
+    {
+      "type": "eligibility",
+      "condition": "湖北省高校全日制在校本科生及研究生",
+      "qualification": "在校本科生或研究生"
+    },
+    {
+      "type": "team_size",
+      "min": 2,
+      "max": 5,
+      "advisor_required": true
+    },
+    {
+      "type": "deadline",
+      "action": "报名",
+      "due": "2026-06-30T23:59:00+08:00"
+    },
+    {
+      "type": "deadline",
+      "action": "省赛材料提交",
+      "due": "2026-09-15T17:00:00+08:00"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*",
+      "description": "项目申报书"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*",
+      "description": "商业计划书"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.ppt*",
+      "description": "项目展示PPT"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.mp4",
+      "description": "项目介绍视频"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.pdf",
+      "description": "团队成员信息表"
+    },
+    {
+      "type": "file_constraint",
+      "pattern": "*",
+      "allowed_formats": [
+        "pdf"
+      ],
+      "page_limit": 30
+    },
+    {
+      "type": "file_constraint",
+      "pattern": "*",
+      "allowed_formats": [
+        "pdf"
+      ],
+      "page_limit": 50
+    },
+    {
+      "type": "file_constraint",
+      "pattern": "*.mp4",
+      "allowed_formats": [
+        "mp4"
+      ],
+      "max_size": 209715200
+    },
+    {
+      "type": "anonymity",
+      "patterns": [
+        "学校名称",
+        "学院名称",
+        "指导教师姓名",
+        "团队成员姓名"
+      ]
+    },
+    {
+      "type": "consistency",
+      "left": "项目申报书.项目名称",
+      "right": "商业计划书.项目名称",
+      "relation": "equal"
+    }
+  ]
+}

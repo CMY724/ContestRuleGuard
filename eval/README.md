@@ -1,15 +1,28 @@
-# 赛规通评测数据集
+﻿# ContestRuleGuard Evaluation Dataset
 
-## 结构
-- cases/ — 真实竞赛规则文档样本
-- gold/ — 人工标注的正确答案
-- aselines/ — 基线方法结果
-- 
-esults/ — 赛规通运行结果
+## Overview
+6 competition notice cases covering diverse competition types and rule patterns.
 
-## 评测维度
-1. 规则召回率 (Recall): 发现多少条真实规则
-2. 规则精确率 (Precision): 抽取的规则中有多少是正确的
-3. 字段准确率 (Field Accuracy): deadline/eligibility 等字段值是否准确
-4. 证据溯源率 (Evidence Traceability): 每条规则是否有可追溯的证据来源
-5. 冲突发现率 (Conflict Detection): 是否发现文档间的规则冲突
+## Cases
+
+| # | Case | Type | Key Rule Types |
+|---|------|------|----------------|
+| 1 | sample_rule_notice | 校赛AI | eligibility, team_size, deadline, anonymity, file_required, file_constraint |
+| 2 | provincial_innovation | 省级创新创业 | eligibility, team_size, deadline, file_required, file_constraint, anonymity, consistency |
+| 3 | national_programming | 全国程序设计 | eligibility, team_size, deadline, file_required, file_constraint, anonymity |
+| 4 | math_modeling | 数学建模 | eligibility, team_size, deadline, file_required, file_constraint, anonymity |
+| 5 | english_speech | 英语演讲 | eligibility, team_size, deadline, file_required, file_constraint |
+| 6 | multi_track | 多赛道计算机设计 | eligibility, team_size, deadline, file_required, file_constraint, anonymity, consistency |
+
+## Running Evaluation
+
+```bash
+cd eval
+python run.py
+```
+
+## Adding New Cases
+
+1. Create `cases/your_case.txt` with the competition notice text
+2. Create `gold/your_case_gold.json` with expected rules
+3. Run evaluation to verify

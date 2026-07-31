@@ -1,0 +1,54 @@
+{
+  "case": "english_speech",
+  "rules": [
+    {
+      "type": "eligibility",
+      "condition": "全国普通高等学校在校本、专科学生",
+      "qualification": "在校本/专科生"
+    },
+    {
+      "type": "team_size",
+      "min": 1,
+      "max": 1,
+      "advisor_required": false
+    },
+    {
+      "type": "deadline",
+      "action": "校园选拔赛结束",
+      "due": "2026-06-30T23:59:00+08:00"
+    },
+    {
+      "type": "deadline",
+      "action": "省级复赛",
+      "due": "2026-09-20T00:00:00+08:00"
+    },
+    {
+      "type": "deadline",
+      "action": "全国决赛",
+      "due": "2026-11-05T00:00:00+08:00"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.mp4",
+      "description": "定题演讲视频"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.pdf",
+      "description": "演讲稿文本"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*.pdf",
+      "description": "选手报名表"
+    },
+    {
+      "type": "file_constraint",
+      "pattern": "*.mp4",
+      "allowed_formats": [
+        "mp4"
+      ],
+      "max_size": 524288000
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "case": "national_programming",
+  "rules": [
+    {
+      "type": "eligibility",
+      "condition": "全日制在校本科生",
+      "qualification": "在校本科生"
+    },
+    {
+      "type": "team_size",
+      "min": 3,
+      "max": 3,
+      "advisor_required": true
+    },
+    {
+      "type": "deadline",
+      "action": "网络预选赛",
+      "due": "2026-05-10T12:00:00+08:00"
+    },
+    {
+      "type": "deadline",
+      "action": "分赛区比赛开始",
+      "due": "2026-06-15T00:00:00+08:00"
+    },
+    {
+      "type": "deadline",
+      "action": "全国总决赛",
+      "due": "2026-10-10T00:00:00+08:00"
+    },
+    {
+      "type": "file_required",
+      "pattern": "*",
+      "description": "队伍报名表"
+    },
+    {
+      "type": "file_constraint",
+      "pattern": "*",
+      "allowed_formats": [
+        "pdf"
+      ]
+    },
+    {
+      "type": "anonymity",
+      "patterns": [
+        "选手身份"
+      ]
+    }
+  ]
+}
