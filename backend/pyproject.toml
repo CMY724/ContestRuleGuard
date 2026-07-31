@@ -54,3 +54,6 @@ python_version = "3.12"
 disallow_untyped_defs = true
 warn_return_any = true
 warn_unused_ignores = true
+
+[tool.ruff.lint.per-file-ignores]
+"src/contest_rule_guard/rules/prompts.py" = ["E501"]

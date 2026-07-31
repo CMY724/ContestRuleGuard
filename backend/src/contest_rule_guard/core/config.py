@@ -28,6 +28,9 @@ class Settings(BaseSettings):
         ge=0,
         allow_inf_nan=False,
     )
+    deepseek_api_key: str = Field(default="", description="DeepSeek API key")
+    deepseek_model: str = Field(default="deepseek-chat")
+    deepseek_timeout_s: float = Field(default=120, ge=10, le=600)
     project_storage_roots: tuple[Path, ...] = (
         Path("./data/uploads"),
         Path("./data/submission-artifacts"),

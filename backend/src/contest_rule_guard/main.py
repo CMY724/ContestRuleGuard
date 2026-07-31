@@ -1,8 +1,11 @@
-﻿from fastapi import FastAPI, Request
+﻿from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from contest_rule_guard.core.config import Settings, get_settings
+from contest_rule_guard.core.deepseek_provider import DeepSeekProvider
 from contest_rule_guard.core.model_budget import BudgetExceeded
 from contest_rule_guard.db.session import build_engine, build_session_factory
 from contest_rule_guard.evidence.api import router as evidence_router
@@ -16,8 +19,22 @@ from contest_rule_guard.rules.api import router as rules_router
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     resolved = settings or get_settings()
-    app = FastAPI(title=resolved.app_name, version="0.1.0")
+
+    @asynccontextmanager
+    async def _lifespan(_app: FastAPI):
+        yield
+        provider = getattr(_app.state, "model_provider", None)
+        if isinstance(provider, DeepSeekProvider):
+            await provider.close()
+
+    app = FastAPI(title=resolved.app_name, version="0.1.0", lifespan=_lifespan)
     app.state.settings = resolved
+    if resolved.deepseek_api_key:
+        app.state.model_provider = DeepSeekProvider(
+            api_key=resolved.deepseek_api_key,
+            model=resolved.deepseek_model,
+            timeout_s=resolved.deepseek_timeout_s,
+        )
     engine = build_engine(resolved.database_url)
     app.state.engine = engine
     app.state.session_factory = build_session_factory(engine)
