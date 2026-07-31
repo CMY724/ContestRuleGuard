@@ -66,7 +66,7 @@ class BaseRule(BaseModel):
 # ?? Eight Rule Types ?????????????????????????????????????????????
 
 class DeadlineRule(BaseRule):
-    rule_type: Literal["deadline"] = "deadline"  # type: ignore[assignment]
+    rule_type: Literal["deadline"] = "deadline"
     action: NonEmptyString
     due_at: datetime
     timezone: str = "Asia/Shanghai"
@@ -74,13 +74,13 @@ class DeadlineRule(BaseRule):
 
 
 class EligibilityRule(BaseRule):
-    rule_type: Literal["eligibility"] = "eligibility"  # type: ignore[assignment]
+    rule_type: Literal["eligibility"] = "eligibility"
     condition: NonEmptyString
     qualification: NonEmptyString
 
 
 class TeamSizeRule(BaseRule):
-    rule_type: Literal["team_size"] = "team_size"  # type: ignore[assignment]
+    rule_type: Literal["team_size"] = "team_size"
     min_members: int = Field(ge=1)
     max_members: int = Field(ge=1)
     advisor_required: bool = False
@@ -93,14 +93,14 @@ class TeamSizeRule(BaseRule):
 
 
 class FileRequiredRule(BaseRule):
-    rule_type: Literal["file_required"] = "file_required"  # type: ignore[assignment]
+    rule_type: Literal["file_required"] = "file_required"
     file_name_pattern: NonEmptyString
     description: str = ""
     mandatory: bool = True
 
 
 class FileConstraintRule(BaseRule):
-    rule_type: Literal["file_constraint"] = "file_constraint"  # type: ignore[assignment]
+    rule_type: Literal["file_constraint"] = "file_constraint"
     file_name_pattern: NonEmptyString
     max_size_bytes: int | None = None
     allowed_formats: list[str] = Field(default_factory=list)
@@ -108,19 +108,19 @@ class FileConstraintRule(BaseRule):
 
 
 class ConsistencyRule(BaseRule):
-    rule_type: Literal["consistency"] = "consistency"  # type: ignore[assignment]
+    rule_type: Literal["consistency"] = "consistency"
     left_field: NonEmptyString
     right_field: NonEmptyString
     relation: ConsistencyRelation = ConsistencyRelation.EQUAL
 
 
 class AnonymityRule(BaseRule):
-    rule_type: Literal["anonymity"] = "anonymity"  # type: ignore[assignment]
+    rule_type: Literal["anonymity"] = "anonymity"
     prohibited_patterns: list[str] = Field(min_length=1)
 
 
 class DependencyRule(BaseRule):
-    rule_type: Literal["dependency"] = "dependency"  # type: ignore[assignment]
+    rule_type: Literal["dependency"] = "dependency"
     depends_on_rule_id: UUID
     dependency_type: DependencyType = DependencyType.REQUIRES
 
@@ -138,6 +138,6 @@ ContestRule = (
     | DependencyRule
 )
 
-ContestRuleAdapter: TypeAdapter[ContestRule] = TypeAdapter(  # type: ignore[valid-type]
+ContestRuleAdapter = TypeAdapter(Annotated[ContestRule, Field(discriminator="rule_type")])
     Annotated[ContestRule, Field(discriminator="rule_type")],
 )

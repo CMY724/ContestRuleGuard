@@ -10,7 +10,7 @@ const stageNames: Record<TargetStage, string> = {
   national: "国赛",
 };
 
-export function ProjectPage() {
+export function ProjectPage({ onSelectProject }: { onSelectProject: (id: string) => void }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -104,17 +104,17 @@ export function ProjectPage() {
           </select>
         </label>
         <button disabled={loading || submitting}>
-          {submitting ? "创建中…" : "创建项目"}
+          {submitting ? "创建中�? : "创建项目"}
         </button>
       </form>
 
       <div className="project-list">
         <h2>竞赛项目</h2>
-        {loading && <p>正在加载…</p>}
-        {!loading && !error && projects.length === 0 && <p>还没有项目</p>}
+        {loading && <p>正在加载�?/p>}
+        {!loading && !error && projects.length === 0 && <p>还没有项�?/p>}
         {error && <p role="alert">{error}</p>}
         {projects.map((project) => (
-          <article className="project-card" key={project.id}>
+          <article className="project-card" key={project.id} onClick={() => onSelectProject(project.id)} style={{cursor:"pointer"}}>
             <h3>{project.name}</h3>
             <p>
               {project.competition_year} · {project.track} ·{" "}

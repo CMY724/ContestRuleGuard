@@ -16,7 +16,7 @@ def get_graph(project_id: UUID, session: Session = Depends(get_session)) -> Rule
 
 
 @router.get("/conflicts")
-def list_conflicts(project_id: UUID, session: Session = Depends(get_session)):  # noqa: B008
+def list_conflicts(project_id: UUID, session: Session = Depends(get_session)) -> list:  # noqa: B008
     return GraphRepository(session).list_conflicts(project_id)
 
 

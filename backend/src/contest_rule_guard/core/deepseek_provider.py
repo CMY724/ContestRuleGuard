@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -71,7 +71,7 @@ class DeepSeekProvider:
         response.raise_for_status()
         body = response.json()
         content = body["choices"][0]["message"]["content"]
-        return json.loads(content)
+        return cast(dict[str, Any], json.loads(content))
 
     async def close(self) -> None:
         await self._client.aclose()
