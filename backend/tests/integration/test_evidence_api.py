@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from contest_rule_guard.evidence.models import EvidenceSpan
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"  # noqa: E501
 
 
 def test_create_and_list_evidence(client) -> None:
@@ -20,6 +20,7 @@ def test_create_and_list_evidence(client) -> None:
 
     # Upload a document
     from io import BytesIO
+
     from docx import Document
     docx = Document()
     docx.add_paragraph("????????????????????")
@@ -30,7 +31,7 @@ def test_create_and_list_evidence(client) -> None:
     upload = client.post(
         f"/api/projects/{project_id}/documents",
         data={"source_tier": "primary", "stage": "school"},
-        files={"file": ("rule.docx", buffer, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")},
+        files={"file": ("rule.docx", buffer, DOCX_MIME)},
     )
     assert upload.status_code == 201, upload.text
     doc = upload.json()
@@ -95,6 +96,7 @@ def test_evidence_with_invalid_block_returns_422(client) -> None:
     project_id = response.json()["id"]
 
     from io import BytesIO
+
     from docx import Document
     docx = Document()
     docx.add_paragraph("????????????????????")
@@ -105,7 +107,7 @@ def test_evidence_with_invalid_block_returns_422(client) -> None:
     upload = client.post(
         f"/api/projects/{project_id}/documents",
         data={"source_tier": "primary", "stage": "school"},
-        files={"file": ("rule.docx", buffer, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")},
+        files={"file": ("rule.docx", buffer, DOCX_MIME)},
     )
     doc = upload.json()
 
