@@ -1,4 +1,5 @@
 from hashlib import sha256
+from typing import get_type_hints
 from uuid import uuid4
 
 import pytest
@@ -12,7 +13,7 @@ from contest_rule_guard.ingestion.models import (
     TextBlock,
     UnitKind,
 )
-from contest_rule_guard.ingestion.ports import DocumentParser
+from contest_rule_guard.ingestion.ports import DocumentParser, IngestionPort
 from contest_rule_guard.ingestion.registry import ParserRegistry, UnsupportedDocumentError
 
 
@@ -40,6 +41,12 @@ class StubParser(DocumentParser):
 
 class ExtensionOnlyParser(StubParser):
     media_types = frozenset({"application/x-extension-only"})
+
+
+def test_ingestion_port_source_profile_id_is_string() -> None:
+    type_hints = get_type_hints(IngestionPort.import_remote_document)
+
+    assert type_hints["source_profile_id"] is str
 
 
 def test_text_block_build_uses_a_stable_source_uuid() -> None:

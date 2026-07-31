@@ -19,6 +19,6 @@ class IngestionPort(Protocol):
         self,
         project_id: UUID,
         url: str,
-        source_profile_id: UUID,
+        source_profile_id: str,
         idempotency_key: str,
     ) -> UUID: ...
