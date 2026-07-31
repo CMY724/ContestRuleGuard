@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - CRG_DATABASE_URL=sqlite:///./data/contest-rule-guard.db
+      - CRG_DEEPSEEK_API_KEY=
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

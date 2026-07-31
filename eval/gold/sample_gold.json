@@ -1,0 +1,42 @@
+{
+  "document": "eval/cases/sample_rule_notice.txt",
+  "competition": "全球人工智能算法精英大赛",
+  "stage": "school",
+  "rules": [
+    {
+      "rule_type": "deadline",
+      "title": "校赛材料提交截止",
+      "action": "school_submission",
+      "due_at": "2026-09-25T17:00:00+08:00",
+      "timezone": "Asia/Shanghai",
+      "inclusive": true,
+      "quote": "校赛材料提交截止时间：2026年9月25日17:00"
+    },
+    {
+      "rule_type": "eligibility",
+      "title": "参赛资格",
+      "condition": "参赛选手必须为在校全日制本科生",
+      "qualification": "全日制本科在籍学生",
+      "quote": "参赛选手必须为在校全日制本科生"
+    },
+    {
+      "rule_type": "team_size",
+      "title": "团队人数",
+      "min_members": 1,
+      "max_members": 3,
+      "advisor_required": false,
+      "quote": "每支队伍人数为1-3人"
+    },
+    {
+      "rule_type": "anonymity",
+      "title": "校赛材料匿名",
+      "prohibited_patterns": [
+        "学校名称",
+        "学院名称",
+        "导师姓名",
+        "学号"
+      ],
+      "quote": "校赛阶段提交材料中不得出现学校名称、学院名称或导师姓名"
+    }
+  ]
+}
