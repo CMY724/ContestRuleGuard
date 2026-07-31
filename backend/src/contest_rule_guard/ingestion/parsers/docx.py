@@ -13,6 +13,13 @@ from contest_rule_guard.ingestion.models import (
 )
 from contest_rule_guard.ingestion.ports import DocumentParser
 
+_DOCX_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+def _paragraph_text(p_element) -> str:
+    """Extract canonical paragraph text from ``w:t`` elements."""
+    parts = [t.text or "" for t in p_element.findall(f".//{_DOCX_NS}t")]
+    return "".join(parts).strip()
+
 
 class DocxParser(DocumentParser):
     media_types = frozenset(
@@ -29,7 +36,7 @@ class DocxParser(DocumentParser):
         for element in source.element.body.iterchildren():
             tag = element.tag.rsplit("}", 1)[-1]
             if tag == "p":
-                text = source.paragraphs[paragraph_index].text.strip()
+                text = _paragraph_text(element)
                 if text:
                     blocks.append(
                         TextBlock.build(
@@ -53,7 +60,11 @@ class DocxParser(DocumentParser):
                                     document_id=context.document_id,
                                     unit_index=1,
                                     block_index=len(blocks),
-                                    source_path=f"table[{table_index}].row[{row_index}].cell[{cell_index}]",
+                                    source_path=(
+                                        f"table[{table_index}]"
+                                        f".row[{row_index}]"
+                                        f".cell[{cell_index}]"
+                                    ),
                                     text=text,
                                     kind=BlockKind.TABLE_CELL,
                                 )

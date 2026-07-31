@@ -15,16 +15,20 @@ from contest_rule_guard.ingestion.models import (
 from contest_rule_guard.ingestion.ports import DocumentParser
 
 
+def _zero_dimension(name: str) -> int:
+    raise ValueError(f"invalid pptx: zero EMU value for {name}")
+
+
 def _shape_bbox(shape: BaseShape, width: int, height: int) -> BoundingBox:
     left = int(shape.left)
     top = int(shape.top)
     right = left + int(shape.width)
     bottom = top + int(shape.height)
     return BoundingBox(
-        left=left / width if width else 0,
-        top=top / height if height else 0,
-        right=right / width if width else 0,
-        bottom=bottom / height if height else 0,
+        left=left / width if width else _zero_dimension("slide width"),
+        top=top / height if height else _zero_dimension("slide height"),
+        right=right / width if width else _zero_dimension("slide width"),
+        bottom=bottom / height if height else _zero_dimension("slide height"),
     )
 
 

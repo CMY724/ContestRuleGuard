@@ -3,6 +3,7 @@ from io import BytesIO
 from uuid import uuid4
 
 from docx import Document
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from contest_rule_guard.ingestion.models import BlockKind, ParseContext, UnitKind
 from contest_rule_guard.ingestion.parsers.docx import DocxParser
@@ -10,6 +11,7 @@ from contest_rule_guard.ingestion.parsers.docx import DocxParser
 
 def make_docx() -> bytes:
     document = Document()
+    document.add_heading("竞赛规则通知", level=1)
     document.add_paragraph("提交规则")
     document.add_paragraph("团队人数：1至3人")
     table = document.add_table(rows=2, cols=2)
@@ -22,7 +24,7 @@ def make_docx() -> bytes:
     return buffer.getvalue()
 
 
-def test_docx_parser_captures_paragraph_and_table_location() -> None:
+def test_docx_parser_handles_mixed_headings_and_paragraphs() -> None:
     content = make_docx()
     context = ParseContext.from_upload(
         document_id=uuid4(),
@@ -32,12 +34,12 @@ def test_docx_parser_captures_paragraph_and_table_location() -> None:
     )
     parsed = DocxParser().parse(content, context)
     assert parsed.units[0].kind is UnitKind.FLOW
-    kinds = [block.kind for block in parsed.units[0].blocks]
     texts = [block.text for block in parsed.units[0].blocks]
-    assert BlockKind.PARAGRAPH in kinds
-    assert BlockKind.TABLE_CELL in kinds
+    kinds = [block.kind for block in parsed.units[0].blocks]
+    assert "竞赛规则通知" in texts
     assert "提交规则" in texts
     assert "团队人数：1至3人" in texts
     assert "赛道" in texts
     assert "AI+OPC" in texts
-    assert "演示脚本" in texts
+    assert BlockKind.PARAGRAPH in kinds
+    assert BlockKind.TABLE_CELL in kinds
