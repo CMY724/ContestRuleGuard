@@ -1,0 +1,181 @@
+{
+  "rules": [
+    {
+      "id": "a1b2c3d4-1111-2222-3333-444455556666",
+      "rule_type": "eligibility",
+      "title": "参赛选手必须为在校全日制本科生",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "明确要求参赛选手为在校全日制本科生。",
+      "bindings": [],
+      "condition": "参赛选手必须为在校全日制本科生",
+      "qualification": "在校全日制本科生"
+    },
+    {
+      "id": "b2c3d4e5-2222-3333-4444-555566667777",
+      "rule_type": "team_size",
+      "title": "每支队伍人数为1-3人",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "队伍人数限制为1到3人。",
+      "bindings": [],
+      "min_members": 1,
+      "max_members": 3,
+      "advisor_required": false
+    },
+    {
+      "id": "c3d4e5f6-3333-4444-5555-666677778888",
+      "rule_type": "deadline",
+      "title": "校赛材料提交截止时间",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "校赛材料提交截止时间为2026年9月25日17:00（北京时间）。",
+      "bindings": [],
+      "action": "school_submission",
+      "due_at": "2026-09-25T17:00:00+08:00",
+      "timezone": "Asia/Shanghai",
+      "inclusive": true
+    },
+    {
+      "id": "d4e5f6a7-4444-5555-6666-777788889999",
+      "rule_type": "anonymity",
+      "title": "校赛材料中不得出现学校名称、学院名称或导师姓名",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "校赛阶段提交材料中禁止出现学校名称、学院名称或导师姓名。",
+      "bindings": [],
+      "prohibited_patterns": [
+        "学校名称",
+        "学院名称",
+        "导师姓名"
+      ]
+    },
+    {
+      "id": "e5f6a7b8-5555-6666-7777-888899990000",
+      "rule_type": "file_required",
+      "title": "提交材料包括作品说明书、演示视频、源代码压缩包",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "必须提交作品说明书、演示视频和源代码压缩包。",
+      "bindings": [],
+      "file_name_pattern": ".*",
+      "description": "作品说明书、演示视频、源代码压缩包",
+      "mandatory": true
+    },
+    {
+      "id": "f6a7b8c9-6666-7777-8888-999900001111",
+      "rule_type": "file_constraint",
+      "title": "作品说明书格式和页数限制",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "error",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "作品说明书必须为PDF格式，不超过20页。",
+      "bindings": [],
+      "file_name_pattern": ".*",
+      "max_size_bytes": null,
+      "allowed_formats": [
+        "pdf"
+      ],
+      "page_limit": 20
+    },
+    {
+      "id": "a7b8c9d0-7777-8888-9999-000011112222",
+      "rule_type": "file_constraint",
+      "title": "演示视频格式和时长限制",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "error",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "演示视频必须为MP4格式，不超过5分钟。",
+      "bindings": [],
+      "file_name_pattern": ".*",
+      "max_size_bytes": null,
+      "allowed_formats": [
+        "mp4"
+      ],
+      "page_limit": null
+    },
+    {
+      "id": "b8c9d0e1-8888-9999-0000-111122223333",
+      "rule_type": "file_constraint",
+      "title": "源代码压缩包大小限制",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "error",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "源代码压缩包不超过100MB。",
+      "bindings": [],
+      "file_name_pattern": ".*",
+      "max_size_bytes": 104857600,
+      "allowed_formats": null,
+      "page_limit": null
+    }
+  ]
+}

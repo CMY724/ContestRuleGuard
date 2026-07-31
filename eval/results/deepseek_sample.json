@@ -1,0 +1,27 @@
+{
+  "rules": [
+    {
+      "rule_type": "eligibility",
+      "title": "参赛选手资格",
+      "description": "参赛选手必须为在校全日制本科生。"
+    },
+    {
+      "rule_type": "team",
+      "title": "队伍人数",
+      "description": "每支队伍人数为1-3人。",
+      "min_people": 1,
+      "max_people": 3
+    },
+    {
+      "rule_type": "deadline",
+      "title": "校赛材料提交截止时间",
+      "description": "校赛材料提交截止时间：2026年9月25日17:00（北京时间）。",
+      "datetime": "2026-09-25T17:00:00+08:00"
+    },
+    {
+      "rule_type": "anonymity",
+      "title": "校赛材料匿名要求",
+      "description": "校赛阶段提交材料中不得出现学校名称、学院名称或导师姓名。"
+    }
+  ]
+}

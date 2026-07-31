@@ -1,0 +1,122 @@
+{
+  "rules": [
+    {
+      "id": "a1b2c3d4-1111-4222-8333-444455556666",
+      "rule_type": "eligibility",
+      "title": "参赛选手必须为在校全日制本科生",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "明确要求参赛选手为在校全日制本科生。",
+      "bindings": [
+        {
+          "field_path": "participant.eligibility",
+          "evidence_ids": [
+            "evidence-1"
+          ],
+          "quote": "第一条：参赛选手必须为在校全日制本科生。"
+        }
+      ],
+      "condition": "参赛选手必须为在校全日制本科生",
+      "qualification": "在校全日制本科生"
+    },
+    {
+      "id": "b2c3d4e5-2222-4333-9444-555566667777",
+      "rule_type": "team_size",
+      "title": "每支队伍人数为1-3人",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "队伍人数限制为1至3人。",
+      "bindings": [
+        {
+          "field_path": "team.size",
+          "evidence_ids": [
+            "evidence-2"
+          ],
+          "quote": "第二条：每支队伍人数为1-3人。"
+        }
+      ],
+      "min_members": 1,
+      "max_members": 3,
+      "advisor_required": false
+    },
+    {
+      "id": "c3d4e5f6-3333-4444-8555-666677778888",
+      "rule_type": "deadline",
+      "title": "校赛材料提交截止时间",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "block",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "校赛材料提交截止时间为2026年9月25日17:00（北京时间）。",
+      "bindings": [
+        {
+          "field_path": "submission.deadline",
+          "evidence_ids": [
+            "evidence-3"
+          ],
+          "quote": "第三条：校赛材料提交截止时间：2026年9月25日17:00（北京时间）。"
+        }
+      ],
+      "action": "school_submission",
+      "due_at": "2026-09-25T17:00:00+08:00",
+      "timezone": "Asia/Shanghai",
+      "inclusive": true
+    },
+    {
+      "id": "d4e5f6a7-4444-4555-8666-777788889999",
+      "rule_type": "anonymity",
+      "title": "校赛材料中不得出现学校名称、学院名称或导师姓名",
+      "scope": {
+        "stages": [
+          "school"
+        ],
+        "tracks": [
+          "AI"
+        ]
+      },
+      "severity": "error",
+      "status": "needs_review",
+      "confidence": 1.0,
+      "notes": "校赛阶段提交材料中禁止出现学校名称、学院名称或导师姓名。",
+      "bindings": [
+        {
+          "field_path": "submission.materials",
+          "evidence_ids": [
+            "evidence-4"
+          ],
+          "quote": "第四条：校赛阶段提交材料中不得出现学校名称、学院名称或导师姓名。"
+        }
+      ],
+      "prohibited_patterns": [
+        "学校名称",
+        "学院名称",
+        "导师姓名"
+      ]
+    }
+  ]
+}

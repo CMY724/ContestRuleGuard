@@ -71,7 +71,18 @@ class DeepSeekProvider:
         response.raise_for_status()
         body = response.json()
         content = body["choices"][0]["message"]["content"]
-        return cast(dict[str, Any], json.loads(content))
+        result = cast(dict[str, Any], json.loads(content))
+        for rule in result.get("rules", []):
+            rt = rule.get("rule_type", "")
+            if rt == "team":
+                rule["rule_type"] = "team_size"
+            # Fix null fields to suitable defaults
+            for key in ("allowed_formats", "prohibited_patterns", "bindings", "artifact_kinds"):
+                if rule.get(key) is None:
+                    rule[key] = []
+            if rule.get("scope") and rule["scope"].get("artifact_kinds") is None:
+                rule["scope"]["artifact_kinds"] = []
+        return result
 
     async def close(self) -> None:
         await self._client.aclose()

@@ -120,9 +120,24 @@ async def extract_rules(
     )
     rule_repo = RuleRepository(session)
     from contest_rule_guard.rules.models import ContestRuleAdapter as Adapter
+
+    # Normalize model output
+    _RULE_ALIASES = {"team": "team_size", "file": "file_required"}
     rules: list[dict] = []
     for rule_data in result.get("rules", []):
         try:
+            # Normalize rule_type aliases
+            rt = rule_data.get("rule_type", "")
+            rule_data["rule_type"] = _RULE_ALIASES.get(rt, rt)
+            # Filter out fake evidence_ids by matching against real evidence
+            if "bindings" in rule_data:
+                real_ids = {str(ev_id) for ev_id in evidence_ids}
+                for b in rule_data["bindings"]:
+                    if "evidence_ids" in b:
+                        b["evidence_ids"] = [
+                            eid for eid in b["evidence_ids"]
+                            if str(eid) in real_ids
+                        ]
             rule = Adapter.validate_python(rule_data)
             rule_repo.add(project_id, rule)
             rules.append(rule.model_dump(mode="json"))

@@ -1,0 +1,8 @@
+{
+  "gold_count": 4,
+  "pred_count": 6,
+  "matched": 4,
+  "extra": 2,
+  "recall": 100.0,
+  "precision": 66.7
+}

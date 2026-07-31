@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>赛规通 · 合规审查报告</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 2rem; }
+h1 { border-bottom: 2px solid #2563eb; padding-bottom: 0.5rem; }
+.stats { display: flex; gap: 2rem; margin: 1.5rem 0; }
+.stat { text-align: center; padding: 1rem; border-radius: 8px; background: #f8fafc; min-width: 100px; }
+.stat .num { font-size: 2rem; font-weight: bold; }
+.stat .label { color: #64748b; font-size: 0.85rem; }
+.pass .num { color: #16a34a; }
+.fail .num { color: #dc2626; }
+.blocked .num { color: #d97706; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+th { background: #f1f5f9; }
+tr.pass { background: #f0fdf4; }
+tr.fail { background: #fef2f2; }
+tr.blocked { background: #fffbeb; }
+footer { margin-top: 2rem; color: #94a3b8; font-size: 0.8rem; text-align: center; }
+</style>
+</head>
+<body>
+<h1>赛规通 · 合规审查报告</h1>
+<p>项目: 全球人工智能算法精英大赛 · 校赛规则审查 | 检查时间: 2026-07-31 05:52 UTC</p>
+<div class="stats">
+    <div class="stat"><div class="num">8</div><div class="label">总规则数</div></div>
+    <div class="stat pass"><div class="num">8</div><div class="label">通过</div></div>
+    <div class="stat fail"><div class="num">0</div><div class="label">未通过</div></div>
+    <div class="stat blocked"><div class="num">0</div><div class="label">阻塞</div></div>
+    <div class="stat"><div class="num">100.0%</div><div class="label">通过率</div></div>
+</div>
+<table>
+<thead><tr><th></th><th>类型</th><th>规则</th><th>严重性</th><th>证据</th><th>详情</th></tr></thead>
+<tbody><tr class="pass">
+            <td>✓</td>
+            <td><code>eligibility</code></td>
+            <td>参赛选手必须为在校全日制本科生</td>
+            <td>warn</td>
+            <td>参赛选手必须为在校全日制本科生</td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>team_size</code></td>
+            <td>每支队伍人数为1-3人</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>deadline</code></td>
+            <td>校赛材料提交截止时间</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>anonymity</code></td>
+            <td>校赛材料中不得出现学校名称、学院名称或导师姓名</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>file_required</code></td>
+            <td>提交材料包括作品说明书、演示视频、源代码压缩包</td>
+            <td>warn</td>
+            <td>作品说明书、演示视频、源代码压缩包</td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>file_constraint</code></td>
+            <td>作品说明书格式和页数限制</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>file_constraint</code></td>
+            <td>演示视频格式和时长限制</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr><tr class="pass">
+            <td>✓</td>
+            <td><code>file_constraint</code></td>
+            <td>源代码压缩包大小限制</td>
+            <td>warn</td>
+            <td></td>
+            <td></td>
+        </tr></tbody>
+</table>
+<footer>ContestRuleGuard 赛规通 · 证据图驱动的竞赛合规智能体</footer>
+</body>
+</html>
