@@ -47,6 +47,14 @@ class DocumentRepository:
             return None
         return self._to_domain(row)
 
+
+    def list_by_project(self, project_id: UUID) -> list[NormalizedDocument]:
+        statement = select(NormalizedDocumentRow).where(
+            NormalizedDocumentRow.project_id == project_id,
+        )
+        rows = self._session.scalars(statement).all()
+        return [self._to_domain(row) for row in rows]
+
     @staticmethod
     def _to_domain(row: NormalizedDocumentRow) -> NormalizedDocument:
         from contest_rule_guard.ingestion.models import DocumentStage, SourceTier
