@@ -139,5 +139,3 @@ ContestRule = (
 )
 
 ContestRuleAdapter = TypeAdapter(Annotated[ContestRule, Field(discriminator="rule_type")])
-    Annotated[ContestRule, Field(discriminator="rule_type")],
-)
