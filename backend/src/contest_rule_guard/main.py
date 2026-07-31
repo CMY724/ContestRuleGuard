@@ -1,9 +1,12 @@
-﻿from fastapi import FastAPI
+﻿from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from contest_rule_guard.core.config import Settings, get_settings
+from contest_rule_guard.core.model_budget import BudgetExceeded
 from contest_rule_guard.db.session import build_engine, build_session_factory
 from contest_rule_guard.ingestion.api import router as ingestion_router
+from contest_rule_guard.ingestion.registry import UnsupportedDocumentError
 from contest_rule_guard.projects.dependencies import build_project_cleanup_registry
 from contest_rule_guard.projects.router import router as projects_router
 
@@ -34,6 +37,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.project_cleanup_registry = build_project_cleanup_registry(resolved)
     app.include_router(projects_router)
     app.include_router(ingestion_router)
+
+    @app.exception_handler(BudgetExceeded)
+    async def budget_exceeded_handler(request: Request, exc: BudgetExceeded) -> JSONResponse:
+        return JSONResponse(
+            status_code=402,
+            content={"detail": str(exc), "type": "budget_exceeded"},
+        )
+
+    @app.exception_handler(UnsupportedDocumentError)
+    async def unsupported_document_handler(
+        request: Request, exc: UnsupportedDocumentError,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=415,
+            content={"detail": str(exc), "type": "unsupported_document"},
+        )
+
+    @app.exception_handler(ValueError)
+    async def value_error_handler(request: Request, exc: ValueError) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
+            content={"detail": str(exc), "type": "value_error"},
+        )
+
     return app
 
 

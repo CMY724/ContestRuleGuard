@@ -18,6 +18,8 @@ class DocumentParser(ABC):
 
 
 class IngestionPort(Protocol):
+    # TODO(phase-c): implement remote document import from official competition websites
+
     async def import_remote_document(
         self,
         project_id: UUID,

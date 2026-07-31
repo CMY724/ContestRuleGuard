@@ -78,9 +78,9 @@ class ModelBudgetLedger:
         approved = requested_project_budget_yuan
         charged = float(
             self._session.scalar(
-                select(func.coalesce(func.sum(ModelUsageEvent.charged_cost_yuan), 0.0)).where(
-                    ModelUsageEvent.project_id == project_id
-                )
+                select(func.coalesce(func.sum(ModelUsageEvent.charged_cost_yuan), 0.0))
+                .where(ModelUsageEvent.project_id == project_id)
+                .with_for_update()
             )
             or 0.0
         )

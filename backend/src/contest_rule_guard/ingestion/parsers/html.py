@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+from contextlib import suppress
 from html.parser import HTMLParser
 from typing import Any, cast
 
@@ -77,7 +78,17 @@ class HtmlParser(DocumentParser):
 
     def parse(self, content: bytes, context: ParseContext) -> NormalizedDocument:
         parser = _VisibleBlockParser()
-        parser.feed(content.decode("utf-8", errors="replace"))
+        text = content.decode("utf-8", errors="replace")
+        # Detect encoding from HTML meta tag for Chinese competition sites
+        import re as _re
+        _charset_pattern = _re.compile(rb'<meta[^>]+charset\\s*=\\s*["\\x27]?([a-zA-Z0-9_-]+)')
+        charset_match = _charset_pattern.search(content[:4096])
+        if charset_match:
+            detected = charset_match.group(1).decode("ascii").lower()
+            if detected not in ("utf-8", "utf8"):
+                with suppress(LookupError, UnicodeDecodeError):
+                    text = content.decode(detected, errors="replace")
+        parser.feed(text)
         blocks = [
             TextBlock.build(
                 document_id=context.document_id,

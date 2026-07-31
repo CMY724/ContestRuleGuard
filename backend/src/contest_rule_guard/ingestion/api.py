@@ -16,6 +16,8 @@ from contest_rule_guard.ingestion.registry import ParserRegistry, UnsupportedDoc
 from contest_rule_guard.ingestion.repository import DocumentRepository
 from contest_rule_guard.ingestion.service import IngestionService
 
+MAX_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MiB
+
 router = APIRouter(prefix="/api/projects/{project_id}/documents", tags=["documents"])
 
 
@@ -41,11 +43,17 @@ async def upload_document(
     service: IngestionService = Depends(ingestion_service),  # noqa: B008
 ) -> NormalizedDocument:
     try:
+        content_bytes = await file.read()
+        if len(content_bytes) > MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"file exceeds maximum upload size of {MAX_UPLOAD_BYTES // (1024*1024)} MiB",
+            )
         document, created = service.ingest(
             project_id,
             file.filename or "upload.bin",
             file.content_type or "application/octet-stream",
-            await file.read(),
+            content_bytes,
             source_tier,
             stage,
         )
