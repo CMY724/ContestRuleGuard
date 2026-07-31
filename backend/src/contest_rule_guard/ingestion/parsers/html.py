@@ -1,5 +1,7 @@
-﻿# backend/src/contest_rule_guard/ingestion/parsers/html.py
+﻿from __future__ import annotations
+
 from html.parser import HTMLParser
+from typing import Any, cast
 
 from contest_rule_guard.ingestion.models import (
     BlockKind,
@@ -13,13 +15,16 @@ from contest_rule_guard.ingestion.ports import DocumentParser
 
 
 class _VisibleBlockParser(HTMLParser):
-    BLOCK_TAGS = frozenset({"title", "h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "td", "th", "a"})
+    BLOCK_TAGS = frozenset({
+        "title", "h1", "h2", "h3", "h4", "h5", "h6",
+        "p", "li", "td", "th", "a",
+    })
     IGNORED_TAGS = frozenset({"script", "style", "noscript", "template", "svg"})
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self._ignored_depth = 0
-        self._active: list[dict[str, object]] = []
+        self._active: list[dict[str, Any]] = []
         self._tag_counts: dict[str, int] = {}
         self.blocks: list[tuple[str, str]] = []
 
@@ -33,7 +38,12 @@ class _VisibleBlockParser(HTMLParser):
         index = self._tag_counts.get(tag, 0)
         self._tag_counts[tag] = index + 1
         href = dict(attrs).get("href") if tag == "a" else None
-        self._active.append({"tag": tag, "path": f"html.{tag}[{index}]", "text": [], "href": href})
+        self._active.append({
+            "tag": tag,
+            "path": f"html.{tag}[{index}]",
+            "text": cast("list[str]", []),
+            "href": href,
+        })
 
     def handle_data(self, data: str) -> None:
         if not self._ignored_depth:

@@ -1,7 +1,7 @@
-﻿# backend/src/contest_rule_guard/ingestion/parsers/pptx.py
-from io import BytesIO
+﻿from io import BytesIO
 
 from pptx import Presentation
+from pptx.shapes.base import BaseShape
 
 from contest_rule_guard.ingestion.models import (
     BlockKind,
@@ -15,16 +15,16 @@ from contest_rule_guard.ingestion.models import (
 from contest_rule_guard.ingestion.ports import DocumentParser
 
 
-def _shape_bbox(shape: object, width: int, height: int) -> BoundingBox:
-    left = int(getattr(shape, "left"))
-    top = int(getattr(shape, "top"))
-    right = left + int(getattr(shape, "width"))
-    bottom = top + int(getattr(shape, "height"))
+def _shape_bbox(shape: BaseShape, width: int, height: int) -> BoundingBox:
+    left = int(shape.left)
+    top = int(shape.top)
+    right = left + int(shape.width)
+    bottom = top + int(shape.height)
     return BoundingBox(
-        left=left / width,
-        top=top / height,
-        right=right / width,
-        bottom=bottom / height,
+        left=left / width if width else 0,
+        top=top / height if height else 0,
+        right=right / width if width else 0,
+        bottom=bottom / height if height else 0,
     )
 
 
@@ -36,18 +36,25 @@ class PptxParser(DocumentParser):
 
     def parse(self, content: bytes, context: ParseContext) -> NormalizedDocument:
         deck = Presentation(BytesIO(content))
+        sw = deck.slide_width or 0
+        sh = deck.slide_height or 0
         units: list[DocumentUnit] = []
         for slide_number, slide in enumerate(deck.slides, start=1):
             blocks: list[TextBlock] = []
             for shape_index, shape in enumerate(slide.shapes):
-                bbox = _shape_bbox(shape, deck.slide_width, deck.slide_height)
+                bbox = _shape_bbox(shape, sw, sh)
                 if shape.has_table:
                     table = shape.table
                     for row_index, row in enumerate(table.rows):
                         for cell_index, cell in enumerate(row.cells):
                             text = " ".join(cell.text.split())
                             if text:
-                                path = f"slide[{slide_number}].shape[{shape_index}].table.row[{row_index}].cell[{cell_index}]"
+                                prefix = f"slide[{slide_number}].shape[{shape_index}]"
+                                suffix = (
+                                    f".table.row[{row_index}]"
+                                    f".cell[{cell_index}]"
+                                )
+                                path = f"{prefix}{suffix}"
                                 blocks.append(
                                     TextBlock.build(
                                         document_id=context.document_id,
@@ -60,10 +67,14 @@ class PptxParser(DocumentParser):
                                     )
                                 )
                 elif shape.has_text_frame:
-                    for paragraph_index, paragraph in enumerate(shape.text_frame.paragraphs):
+                    for par_i, paragraph in enumerate(
+                        shape.text_frame.paragraphs
+                    ):
                         text = " ".join(paragraph.text.split())
                         if text:
-                            path = f"slide[{slide_number}].shape[{shape_index}].paragraph[{paragraph_index}]"
+                            prefix = f"slide[{slide_number}].shape[{shape_index}]"
+                            suffix = f".paragraph[{par_i}]"
+                            path = f"{prefix}{suffix}"
                             blocks.append(
                                 TextBlock.build(
                                     document_id=context.document_id,
@@ -79,8 +90,8 @@ class PptxParser(DocumentParser):
                 DocumentUnit(
                     index=slide_number,
                     kind=UnitKind.SLIDE,
-                    width=deck.slide_width,
-                    height=deck.slide_height,
+                    width=sw,
+                    height=sh,
                     blocks=blocks,
                 )
             )

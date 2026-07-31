@@ -1,7 +1,7 @@
 ﻿# backend/src/contest_rule_guard/ingestion/parsers/pdf.py
 from __future__ import annotations
 
-import fitz
+import fitz  # type: ignore[import-untyped]
 
 from contest_rule_guard.ingestion.models import (
     BlockKind,

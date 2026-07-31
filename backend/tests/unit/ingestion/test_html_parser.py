@@ -1,9 +1,8 @@
 ﻿# backend/tests/unit/ingestion/test_html_parser.py
 from uuid import uuid4
 
-from contest_rule_guard.ingestion.models import BlockKind, ParseContext, UnitKind
+from contest_rule_guard.ingestion.models import ParseContext, UnitKind
 from contest_rule_guard.ingestion.parsers.html import HtmlParser
-
 
 _HTML_TEXT = """\
 <!DOCTYPE html>
