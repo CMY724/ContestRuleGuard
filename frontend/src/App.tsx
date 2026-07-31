@@ -1,9 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { ProjectPage } from "./features/projects/ProjectPage";
 import { DocumentsPage } from "./features/documents/DocumentsPage";
 import { RulesPage } from "./features/rules/RulesPage";
+import { ReviewPage } from "./features/review/ReviewPage";
 
-type Tab = "projects" | "documents" | "rules";
+type Tab = "projects" | "documents" | "rules" | "review";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("projects");
@@ -36,6 +37,13 @@ export default function App() {
           >
             规则管理
           </button>
+          <button
+            className={tab === "review" ? "active" : ""}
+            onClick={() => setTab("review")}
+            disabled={!activeProjectId}
+          >
+            合规审查
+          </button>
         </nav>
       </header>
       {tab === "projects" && (
@@ -46,6 +54,9 @@ export default function App() {
       )}
       {tab === "rules" && activeProjectId && (
         <RulesPage projectId={activeProjectId} />
+      )}
+      {tab === "review" && activeProjectId && (
+        <ReviewPage projectId={activeProjectId} />
       )}
     </main>
   );
